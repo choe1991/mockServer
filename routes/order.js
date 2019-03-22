@@ -10,7 +10,8 @@ router.get('/', function(req, res, next) {
             "orderNo": Random.natural(),
             "id": i+1,//起始值为 1，每次增 1
             "serviceName": Random.cword(4,7),
-            'orderTime':(new Date(Random.datetime('yyyy/MM/dd  HH:mm:ss'))).getTime()/1000
+            'orderTime':(new Date(Random.datetime('yyyy/MM/dd  HH:mm:ss'))).getTime()/1000,
+            'status':Random.integer(0, 1)
         }
         list.push(obj)
     }
