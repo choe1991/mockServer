@@ -14,20 +14,22 @@ const WebSocket = require('ws');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
-
 /**
  * Create HTTP server.
  */
 
 var server = http.createServer(app);
-const wss = new WebSocket.Server({server});
-wss.on('connection', function(ws) {
+global.wss = new WebSocket.Server({server});
+global.wss.on('connection', function(ws) {
     ws.isAlive = true;
+    ws.id = (new Date()).getTime();
     ws.on('message', function sendToAllClients(message) {
-      console.log(message)
-        // wss.clients.forEach(function(client) {
-        //     client.send(message);
-        // })
+      
+      global.wss.clients.forEach(function each(client) {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(data);
+        }
+      });
     });
 
     ws.on('pong', function heartbeat() {
@@ -36,7 +38,7 @@ wss.on('connection', function(ws) {
 });
 
 setInterval(function pingAllConnections() {
-    wss.clients.forEach(function(ws) {
+  global.wss.clients.forEach(function(ws) {
         if (ws.isAlive === false) return ws.terminate();
         ws.isAlive = false;
         ws.ping();
