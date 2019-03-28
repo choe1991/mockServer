@@ -11,7 +11,7 @@
   <p>Welcome to <%= title %></p>
   <div onclick="doit()">123123123123</div>
   <script>
-    let ws = new WebSocket('ws://127.0.0.1:3000');
+    let ws = new WebSocket('ws://86qweqweqwe.com');
     ws.onopen = function () {
       // Web Socket 已连接上，使用 send() 方法发送数据
       ws.send("发送数据");
@@ -19,7 +19,7 @@
 
     ws.onmessage = function (evt) {
       var received_msg = evt.data;
-      console.log("")
+      console.log(received_msg)
     };
 
     ws.onclose = function () {
@@ -38,7 +38,7 @@
     //   clearTimeout(this.pingTimeout);
     // });
     function doit() {
-      ws.send("123")
+      ws.send("1346555093")
     }
 
 
