@@ -29,7 +29,7 @@ global.wss.on('connection', function(ws) {
       console.log("服务器接收到socket请求",message)
       global.wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
-          if(isNaN(+message)){
+          if(!isNaN(+message)){
             console.log(message)
             client.send(message);
           }
