@@ -8,7 +8,16 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var ordersRouter = require('./routes/order');
 var app = express();
+// const WebSocket = require('ws');
 
+// const wss = new WebSocket.Server({ port: 8080 });
+
+// wss.on('connection', function connection(ws) {
+//   ws.on('message', function incoming(message) {
+//     console.log('received: %s', message);
+//   });
+//   ws.send('something');
+// });
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

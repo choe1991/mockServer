@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('mock-server:server');
 var http = require('http');
-
+const WebSocket = require('ws');
 /**
  * Get port from environment and store in Express.
  */
@@ -20,7 +20,28 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-var io = require('socket.io')(server);
+const wss = new WebSocket.Server({server});
+wss.on('connection', function(ws) {
+    ws.isAlive = true;
+    ws.on('message', function sendToAllClients(message) {
+      console.log(message)
+        // wss.clients.forEach(function(client) {
+        //     client.send(message);
+        // })
+    });
+
+    ws.on('pong', function heartbeat() {
+        this.isAlive = true;
+    })
+});
+
+setInterval(function pingAllConnections() {
+    wss.clients.forEach(function(ws) {
+        if (ws.isAlive === false) return ws.terminate();
+        ws.isAlive = false;
+        ws.ping();
+    })
+}, 60000);
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -28,28 +49,28 @@ var io = require('socket.io')(server);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-io.on('connection', function (socket) {
-  socket
-      .on('clientMsg', function (msg) {
-          console.log('message: ' + msg.rp, `你的socketId为${socket.id}`);
-      });
+// io.on('connection', function (socket) {
+//   socket
+//       .on('clientMsg', function (msg) {
+//           console.log('message: ' + msg.rp, `你的socketId为${socket.id}`);
+//       });
 
-  //客户端请求播放歌曲
-  socket.on('playRequest', function (data) {
-      console.log(`用户请求播放ID为${data.value}的歌曲`)
-      socket.emit("log", {value: "已接收到你的请求"})
-      io.to('a').emit('doPlay', data.value);
-      console.log("rooms",Object.keys(socket.rooms))
-      //socket.emit("doPlay", data.value)
-      //转发给播放器端
-  });
+//   //客户端请求播放歌曲
+//   socket.on('playRequest', function (data) {
+//       console.log(`用户请求播放ID为${data.value}的歌曲`)
+//       socket.emit("log", {value: "已接收到你的请求"})
+//       io.to('a').emit('doPlay', data.value);
+//       console.log("rooms",Object.keys(socket.rooms))
+//       //socket.emit("doPlay", data.value)
+//       //转发给播放器端
+//   });
 
-  socket.on('GroupJoin', function (data) {
-    console.log("有用户请求加入到播放器组")
-    socket.join("a");
-    // [ <socket.id>, 'room 237' ]
-  });
-});
+//   socket.on('GroupJoin', function (data) {
+//     console.log("有用户请求加入到播放器组")
+//     socket.join("a");
+//     // [ <socket.id>, 'room 237' ]
+//   });
+// });
 /**
  * Normalize a port into a number, string, or false.
  */

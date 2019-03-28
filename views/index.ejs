@@ -1,11 +1,54 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+
+<head>
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+  <h1><%= title %></h1>
+  <p>Welcome to <%= title %></p>
+  <div onclick="doit()">123123123123</div>
+  <script>
+    let ws = new WebSocket('ws://127.0.0.1:3000');
+    ws.onopen = function () {
+      // Web Socket 已连接上，使用 send() 方法发送数据
+      ws.send("发送数据");
+    };
+
+    ws.onmessage = function (evt) {
+      var received_msg = evt.data;
+      console.log("")
+    };
+
+    ws.onclose = function () {
+      // 关闭 websocket
+    };
+    // client.on('message', function incoming(data) {
+    //   console.log(`Roundtrip time: ${Date.now()} ms`);
+
+    //   setTimeout(function timeout() {
+    //     client.send(data);
+    //   }, 500);
+    // });
+    // client.on('open', heartbeat);
+    // client.on('ping', heartbeat);
+    // client.on('close', function clear() {
+    //   clearTimeout(this.pingTimeout);
+    // });
+    function doit() {
+      ws.send("123")
+    }
+
+
+    function heartbeat() {
+      clearTimeout(this.pingTimeout);
+      this.pingTimeout = setTimeout(() => {
+        this.terminate();
+      }, 30000 + 1000);
+    }
+  </script>
+</body>
+
 </html>
